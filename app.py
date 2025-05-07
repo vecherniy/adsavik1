@@ -1,85 +1,69 @@
-import json
-import os
+from flask import Flask, request, jsonify
 import requests
-from flask import Flask, render_template, request, jsonify
+import os
 
 app = Flask(__name__)
 
-DATA_FILE = 'posts.json'
+BOT_TOKEN = os.environ.get("BOT_TOKEN") or "ТВОЙ_ТОКЕН_ЗДЕСЬ"
+CHAT_ID = os.environ.get("CHAT_ID") or "ТВОЙ_CHAT_ID_ЗДЕСЬ"
 
-BOT_TOKEN = "7980299038:AAFANLDHKEZglhkDYocft-ONiwwkSZ8Fq3c"
-CHANNEL_ID = "@adsavik_test"  # или -100xxxxxxxxxx
+@app.route("/")
+def home():
+    return "Бот запущен!"
 
-def format_message(data):
-    # Название и тип
-    header = f"📦 <b>{data['type']} | {data['name']}</b>"
+@app.route("/send", methods=["POST"])
+def send():
+    data = request.get_json()
 
-    # Цена (если есть)
-    price = ""
-    if data['price']:
-        formatted_price = f"{int(data['price']):,}".replace(",", ".")
-        price = f"\n💸 {formatted_price}₽"
+    if not data:
+        return jsonify({"error": "Нет данных"}), 400
 
-    # Улица
-    street = f"\n📍 {data['street']}"
+    # Форматирование
+    header = f"🛒 <b>{data['header']}</b>\n"
+    price = f"💰 {data['price']}\n" if data['price'] else ""
+    contact = f"📱 {data['contact']}\n"
+    quote_prefix = "✏️ "
+    description = f"\n<blockquote>{quote_prefix}{data['description']}</blockquote>"
 
-    # Описание
-    description = f"\n<blockquote>✏️ {data['description']}</blockquote>"
+    msg = header + price + contact + description
 
-
-    # Теги
-    category = " ".join([f"#{word.lstrip('#')}" for word in data['category'].split()])
-
-    # 👤 или 🔗
-    if data.get("link"):
-        user_line = f"\n\n🔗 <a href=\"{data['link']}\">Перейти к товару</a>"
-    else:
-        user_line = f"\n\n👤 @{data['user']}"
-
-    # Подвал
-    footer = '\n\n<a href="https://t.me/adsavik">🛩 ДОСКА ОБЪЯВЛЕНИЙ</a>'
-
-    return f"{header}{price}{street}{description}\n{category}{user_line}{footer}"
-
-def send_telegram(text):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
-        "chat_id": CHANNEL_ID,
-        "text": text,
+        "chat_id": CHAT_ID,
+        "text": msg,
         "parse_mode": "HTML",
         "disable_web_page_preview": True
     }
-    response = requests.post(url, json=payload)
-    print("Ответ Telegram:", response.text)
 
-@app.route('/')
-def home():
-    return render_template('form.html')
+    res = requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload)
 
-@app.route('/send-post', methods=['POST'])
-def send_post():
-    data = request.get_json()
-    print("Данные с формы:", data)
-
-    # Сохраняем в файл
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            posts = json.load(f)
-    else:
-        posts = []
-
-    posts.append(data)
-
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(posts, f, ensure_ascii=False, indent=2)
-
-    # Отправляем в Telegram
-    try:
-        send_telegram(format_message(data))
-    except Exception as e:
-        print("Ошибка при отправке в Telegram:", e)
+    if res.status_code != 200:
+        return jsonify({"error": res.text}), 500
 
     return jsonify({"status": "ok"}), 200
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+@app.route('/webhook', methods=['POST'])
+def telegram_webhook():
+    data = request.get_json()
+    print("Webhook от Telegram:", data)
+
+    if "message" in data and data["message"].get("text") == "/start":
+        chat_id = data["message"]["chat"]["id"]
+
+        reply_markup = {
+            "keyboard": [
+                [{"text": "📋 Новое объявление", "web_app": {"url": "https://adsavik-bot.onrender.com"}}]
+            ],
+            "resize_keyboard": True,
+            "one_time_keyboard": False
+        }
+
+        payload = {
+            "chat_id": chat_id,
+            "text": "👋 Привет! Чтобы подать объявление, нажми на кнопку ниже:",
+            "reply_markup": reply_markup
+        }
+
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload)
+
+    return jsonify({"status": "ok"}), 200
