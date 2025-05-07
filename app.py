@@ -32,21 +32,24 @@ def send_post_with_photos(data, files):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMediaGroup"
     caption = format_caption(data)
     media = []
+    media_json = []
 
     print("📸 Отправляем фото:", [f.filename for f in files])
 
-    for idx, file in enumerate(files[:3]):
+    for i, file in enumerate(files[:3]):
+        file_id = f"photo{i}"  # уникальный ключ
         filename = secure_filename(file.filename)
         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(path)
-        media.append(("media", (filename, open(path, "rb"))))
 
-    media_json = [{
-        "type": "photo",
-        "media": f"attach://{secure_filename(file.filename)}",
-        "caption": caption if i == 0 else "",
-        "parse_mode": "HTML"
-    } for i, file in enumerate(files[:3])]
+        media.append((file_id, (filename, open(path, "rb"))))
+
+        media_json.append({
+            "type": "photo",
+            "media": f"attach://{file_id}",
+            "caption": caption if i == 0 else "",
+            "parse_mode": "HTML"
+        })
 
     response = requests.post(
         url,
@@ -59,6 +62,7 @@ def send_post_with_photos(data, files):
         raise Exception("Telegram API error")
 
     print("✅ Ответ Telegram:", response.text)
+
 
 def send_text_only(data):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
