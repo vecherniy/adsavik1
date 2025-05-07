@@ -194,5 +194,14 @@
       .catch(err => alert("Ошибка: " + err));
     }
   </script>
+  <script>
+  document.addEventListener('click', function (e) {
+    const isInput = e.target.closest('input, textarea, select, button');
+    if (!isInput) {
+      document.activeElement.blur();
+    }
+  });
+</script>
+
 </body>
 </html>
