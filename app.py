@@ -1,69 +1,85 @@
-from flask import Flask, request, jsonify
-import requests
+import json
 import os
+import requests
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-BOT_TOKEN = os.environ.get("7980299038:AAFANLDHKEZglhkDYocft-ONiwwkSZ8Fq3c") or "7980299038:AAFANLDHKEZglhkDYocft-ONiwwkSZ8Fq3c"
-CHAT_ID = os.environ.get("@adsavik_test") or "@adsavik_test"
+DATA_FILE = 'posts.json'
 
-@app.route("/")
-def home():
-    return "Бот запущен!"
+BOT_TOKEN = "7980299038:AAFANLDHKEZglhkDYocft-ONiwwkSZ8Fq3c"
+CHANNEL_ID = "@adsavik_test"  # или -100xxxxxxxxxx
 
-@app.route("/send", methods=["POST"])
-def send():
-    data = request.get_json()
+def format_message(data):
+    # Название и тип
+    header = f"📦 <b>{data['type']} | {data['name']}</b>"
 
-    if not data:
-        return jsonify({"error": "Нет данных"}), 400
+    # Цена (если есть)
+    price = ""
+    if data['price']:
+        formatted_price = f"{int(data['price']):,}".replace(",", ".")
+        price = f"\n💸 {formatted_price}₽"
 
-    # Форматирование
-    header = f"🛒 <b>{data['header']}</b>\n"
-    price = f"💰 {data['price']}\n" if data['price'] else ""
-    contact = f"📱 {data['contact']}\n"
-    quote_prefix = "✏️ "
-    description = f"\n<blockquote>{quote_prefix}{data['description']}</blockquote>"
+    # Улица
+    street = f"\n📍 {data['street']}"
 
-    msg = header + price + contact + description
+    # Описание
+    description = f"\n<blockquote>✏️ {data['description']}</blockquote>"
 
+
+    # Теги
+    category = " ".join([f"#{word.lstrip('#')}" for word in data['category'].split()])
+
+    # 👤 или 🔗
+    if data.get("link"):
+        user_line = f"\n\n🔗 <a href=\"{data['link']}\">Перейти к товару</a>"
+    else:
+        user_line = f"\n\n👤 @{data['user']}"
+
+    # Подвал
+    footer = '\n\n<a href="https://t.me/adsavik">🛩 ДОСКА ОБЪЯВЛЕНИЙ</a>'
+
+    return f"{header}{price}{street}{description}\n{category}{user_line}{footer}"
+
+def send_telegram(text):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
-        "chat_id": CHAT_ID,
-        "text": msg,
+        "chat_id": CHANNEL_ID,
+        "text": text,
         "parse_mode": "HTML",
         "disable_web_page_preview": True
     }
+    response = requests.post(url, json=payload)
+    print("Ответ Telegram:", response.text)
 
-    res = requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload)
+@app.route('/')
+def home():
+    return render_template('form.html')
 
-    if res.status_code != 200:
-        return jsonify({"error": res.text}), 500
-
-    return jsonify({"status": "ok"}), 200
-
-
-@app.route('/webhook', methods=['POST'])
-def telegram_webhook():
+@app.route('/send-post', methods=['POST'])
+def send_post():
     data = request.get_json()
-    print("Webhook от Telegram:", data)
+    print("Данные с формы:", data)
 
-    if "message" in data and data["message"].get("text") == "/start":
-        chat_id = data["message"]["chat"]["id"]
+    # Сохраняем в файл
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            posts = json.load(f)
+    else:
+        posts = []
 
-        reply_markup = {
-            "keyboard": [
-                [{"text": "📋 Новое объявление", "web_app": {"url": "https://adsavik-bot.onrender.com"}}]
-            ],
-            "resize_keyboard": True,
-            "one_time_keyboard": False
-        }
+    posts.append(data)
 
-        payload = {
-            "chat_id": chat_id,
-            "text": "👋 Привет! Чтобы подать объявление, нажми на кнопку ниже:",
-            "reply_markup": reply_markup
-        }
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(posts, f, ensure_ascii=False, indent=2)
 
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload)
+    # Отправляем в Telegram
+    try:
+        send_telegram(format_message(data))
+    except Exception as e:
+        print("Ошибка при отправке в Telegram:", e)
 
     return jsonify({"status": "ok"}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)
