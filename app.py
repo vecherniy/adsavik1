@@ -4,8 +4,8 @@ import os
 
 app = Flask(__name__)
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN") or "ТВОЙ_ТОКЕН_ЗДЕСЬ"
-CHAT_ID = os.environ.get("CHAT_ID") or "ТВОЙ_CHAT_ID_ЗДЕСЬ"
+BOT_TOKEN = os.environ.get("7980299038:AAFANLDHKEZglhkDYocft-ONiwwkSZ8Fq3c") or "7980299038:AAFANLDHKEZglhkDYocft-ONiwwkSZ8Fq3c"
+CHAT_ID = os.environ.get("@adsavik_test") or "@adsavik_test"
 
 @app.route("/")
 def home():
