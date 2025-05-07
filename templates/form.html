@@ -168,43 +168,44 @@
       document.getElementById("link-block").style.display = isOwnName ? "none" : "block";
     }
 
-    function submitForm() {
-      const formData = new FormData();
-      
-      formData.append("type", document.querySelector(".dropdown-btn").innerText);
-      formData.append("name", document.getElementById("product-name").value.trim());
-      formData.append("street", document.getElementById("street").value.trim());
-      formData.append("description", document.getElementById("description").value.trim());
-      formData.append("price", document.getElementById("price").value.trim());
-      formData.append("category", document.getElementById("category").value.trim());
-      formData.append("user", Telegram.WebApp.initDataUnsafe.user?.username || "неизвестно");
-      
-      // Добавление фотографий
-      for (let i = 1; i <= 3; i++) {
-        const photoInput = document.getElementById(`photo${i}`);
-        if (photoInput.files[0]) {
-          formData.append(`photo${i}`, photoInput.files[0]);
-        }
-      }
+  function submitForm() {
+    const jsonData = {
+      type: document.querySelector(".dropdown-btn").innerText,
+      name: document.getElementById("product-name").value.trim(),
+      street: document.getElementById("street").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      price: document.getElementById("price").value.trim(),
+      category: document.getElementById("category").value.trim(),
+      user: Telegram.WebApp.initDataUnsafe.user?.username || "неизвестно",
+      link: isOwnName ? null : document.getElementById("product-link").value.trim()
+    };
 
-      if (!isOwnName) {
-        formData.append("link", document.getElementById("product-link").value.trim());
-      }
+    const formData = new FormData();
+    formData.append("json", JSON.stringify(jsonData));
 
-      fetch("/send-post", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.json())
-      .then(resp => {
-        if (resp.status === "ok") {
-          alert("Успешно отправлено!");
-        } else {
-          alert("Ошибка при отправке.");
-        }
-      })
-      .catch(err => alert("Ошибка: " + err));
+    for (let i = 1; i <= 3; i++) {
+      const input = document.getElementById(`photo${i}`);
+      if (input && input.files[0]) {
+        formData.append("photos", input.files[0]);
+      }
     }
+
+    fetch("/send-post", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(resp => {
+      if (resp.status === "ok") {
+        alert("Успешно отправлено!");
+        Telegram.WebApp.close();
+      } else {
+        alert("Ошибка при отправке.");
+      }
+    })
+    .catch(err => alert("Ошибка: " + err));
+  }
+
   </script>
   <script>
   document.addEventListener('click', function (e) {
