@@ -50,6 +50,23 @@
       margin-top: 10px;
     }
 
+    .dropdown-btn,
+    .toggle-btn.small {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      background-color: #e0e0e0;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .toggle-btn.small {
+      background-color: #d0d0d0; /* чуть отличающийся оттенок */
+    }
+
     .dropdown-list {
       display: none;
       position: absolute;
@@ -86,19 +103,15 @@
       cursor: pointer;
     }
 
-    .toggle-btn {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #dcdcdc;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+    .notice {
       margin-top: 20px;
-    }
-
-    #link-block {
-      margin-top: 10px;
+      padding: 12px;
+      background-color: #f9f9f9;
+      color: #333;
+      border-left: 4px solid #aaa;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
     }
   </style>
 </head>
@@ -106,15 +119,27 @@
   <div class="container">
     <h2>Новое объявление</h2>
 
-    <label>Тип объявления</label>
-    <div class="dropdown">
-      <button class="dropdown-btn" onclick="toggleDropdown()">Продам</button>
-      <div class="dropdown-list" id="dropdown-options">
-        <div onclick="selectOption('Продам')">Продам</div>
-        <div onclick="selectOption('Отдам')">Отдам</div>
-        <div onclick="selectOption('Сдам')">Сдам</div>
-        <div onclick="selectOption('Куплю')">Куплю</div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <div style="flex: 1 1 60%;">
+        <label>Тип объявления</label>
+        <div class="dropdown">
+          <button class="dropdown-btn" onclick="toggleDropdown()">Продам</button>
+          <div class="dropdown-list" id="dropdown-options">
+            <div onclick="selectOption('Продам')">Продам</div>
+            <div onclick="selectOption('Отдам')">Отдам</div>
+            <div onclick="selectOption('Сдам')">Сдам</div>
+            <div onclick="selectOption('Куплю')">Куплю</div>
+          </div>
+        </div>
       </div>
+      <div style="flex: 1 1 35%; align-self: end;">
+        <button id="toggle-source" class="toggle-btn small" onclick="toggleSource()">От своего имени</button>
+      </div>
+    </div>
+
+    <div id="link-block" style="display: none; margin-top: 15px;">
+      <label>Ссылка на товар</label>
+      <input type="url" id="product-link" placeholder="https://..." />
     </div>
 
     <label>Название товара</label>
@@ -139,11 +164,9 @@
       <input type="file" id="photo3" name="photo" accept="image/*">
     </div>
 
-    <button id="toggle-source" class="toggle-btn" onclick="toggleSource()">От своего имени</button>
-
-    <div id="link-block" style="display: none;">
-      <label>Ссылка на товар</label>
-      <input type="url" id="product-link" placeholder="https://..." />
+    <div class="notice">
+    ⚠️ После нажатия кнопки "Опубликовать" дождитесь сообщения об успешной отправке.  
+      Если его не будет — объявление может не появиться. (Обычно не более 15сек)
     </div>
 
     <button class="publish" onclick="submitForm()">Опубликовать</button>
@@ -214,7 +237,6 @@
       .catch(err => alert("Ошибка: " + err));
     }
 
-    // Скрытие клавиатуры при клике вне поля
     document.addEventListener('click', function (e) {
       const isInput = e.target.closest('input, textarea, select, button');
       if (!isInput) {
