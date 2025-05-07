@@ -25,7 +25,7 @@ def format_caption(data):
         user_line = f"\n\n🔗 <a href=\"{data['link']}\">Перейти к товару</a>"
     else:
         user_line = f"\n\n👤 @{data['user']}"
-    footer = '\n\n<a href="https://t.me/adsavik">🛩 ДОСКА ОБЪЯВЛЕНИЙ</a>'
+    footer = '\n\n<u href="https://t.me/adsavik">🛩 ДОСКА ОБЪЯВЛЕНИЙ</u>'
     return f"{header}{price}{street}{description}\n{category}{user_line}{footer}"
 
 def send_post_with_photos(data, files):
