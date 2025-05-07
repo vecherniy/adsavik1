@@ -33,6 +33,8 @@ def send_post_with_photos(data, files):
     caption = format_caption(data)
     media = []
 
+    print("📸 Отправляем фото:", [f.filename for f in files])
+
     for idx, file in enumerate(files[:3]):
         filename = secure_filename(file.filename)
         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -51,7 +53,29 @@ def send_post_with_photos(data, files):
         data={"chat_id": CHANNEL_ID, "media": json.dumps(media_json)},
         files=media
     )
-    print("Ответ Telegram:", response.text)
+
+    if response.status_code != 200:
+        print("❌ Ошибка от Telegram:", response.text)
+        raise Exception("Telegram API error")
+
+    print("✅ Ответ Telegram:", response.text)
+
+def send_text_only(data):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": CHANNEL_ID,
+        "text": format_caption(data),
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True
+    }
+
+    print("📤 Отправляем текстовое объявление")
+    response = requests.post(url, json=payload)
+
+    if response.status_code != 200:
+        print("❌ Ошибка от Telegram:", response.text)
+    else:
+        print("✅ Ответ Telegram:", response.text)
 
 @app.route('/')
 def home():
@@ -85,17 +109,6 @@ def send_post():
         print("Ошибка при отправке:", e)
 
     return jsonify({"status": "ok"}), 200
-
-def send_text_only(data):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": CHANNEL_ID,
-        "text": format_caption(data),
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True
-    }
-    response = requests.post(url, json=payload)
-    print("Ответ Telegram:", response.text)
 
 if __name__ == '__main__':
     app.run(debug=True)
