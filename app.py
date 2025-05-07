@@ -2,14 +2,24 @@ import json
 import os
 import requests
 from flask import Flask, render_template, request, jsonify
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 DATA_FILE = 'posts.json'
+UPLOAD_FOLDER = 'uploads'  # Папка для хранения изображений
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  # Разрешенные расширения изображений
 
 BOT_TOKEN = "7980299038:AAFANLDHKEZglhkDYocft-ONiwwkSZ8Fq3c"
 CHANNEL_ID = "@adsavik_test"  # или -100xxxxxxxxxx
 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Проверка расширений файлов
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Форматирование сообщения для Telegram
 def format_message(data):
     # Название и тип
     header = f"📦 <b>{data['type']} | {data['name']}</b>"
@@ -26,7 +36,6 @@ def format_message(data):
     # Описание
     description = f"\n<blockquote>✏️ {data['description']}</blockquote>"
 
-
     # Теги
     category = " ".join([f"#{word.lstrip('#')}" for word in data['category'].split()])
 
@@ -39,8 +48,16 @@ def format_message(data):
     # Подвал
     footer = '\n\n<a href="https://t.me/adsavik">🛩 ДОСКА ОБЪЯВЛЕНИЙ</a>'
 
-    return f"{header}{price}{street}{description}\n{category}{user_line}{footer}"
+    # Добавляем фотографии (если есть)
+    images = ""
+    if data.get('images'):
+        images = "\n\n"
+        for image in data['images']:
+            images += f"<a href='{image}'>Фото товара</a>\n"
 
+    return f"{header}{price}{street}{description}\n{category}{user_line}{footer}{images}"
+
+# Отправка сообщения в Telegram
 def send_telegram(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
@@ -51,6 +68,20 @@ def send_telegram(text):
     }
     response = requests.post(url, json=payload)
     print("Ответ Telegram:", response.text)
+
+# Загрузка фотографий
+def save_images(files):
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+
+    images = []
+    for file in files:
+        if allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
+            images.append(f"http://yourdomain.com/{UPLOAD_FOLDER}/{filename}")  # Подставь свой домен
+    return images
 
 @app.route('/')
 def home():
