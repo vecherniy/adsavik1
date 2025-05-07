@@ -68,6 +68,9 @@
       margin-top: 10px;
       border-radius: 8px;
     }
+    .photo-upload {
+      margin-top: 10px;
+    }
     button.publish {
       margin-top: 20px;
       width: 100%;
@@ -110,7 +113,12 @@
   <label>Категория</label>
   <input type="text" id="category" placeholder="электроника" oninput="prependHash(this)" />
 
-  <div id="add-photo" onclick="handlePhotoUpload()">➕ Добавить фото</div>
+  <div class="photo-upload">
+    <label>Фото товара (до 3 фото)</label>
+    <input type="file" id="photo1" name="photo" accept="image/*">
+    <input type="file" id="photo2" name="photo" accept="image/*">
+    <input type="file" id="photo3" name="photo" accept="image/*">
+  </div>
 
   <div style="margin-top: 20px;">
     <button id="toggle-source" onclick="toggleSource()" style="
@@ -152,10 +160,6 @@
       }
     }
 
-    function handlePhotoUpload() {
-      alert("Функция загрузки фото пока не реализована.");
-    }
-
     let isOwnName = true;
 
     function toggleSource() {
@@ -165,23 +169,31 @@
     }
 
     function submitForm() {
-      const data = {
-        type: document.querySelector(".dropdown-btn").innerText,
-        name: document.getElementById("product-name").value.trim(),
-        street: document.getElementById("street").value.trim(),
-        description: document.getElementById("description").value.trim(),
-        price: document.getElementById("price").value.trim(),
-        category: document.getElementById("category").value.trim(),
-        user: Telegram.WebApp.initDataUnsafe.user?.username || "неизвестно",
-        link: isOwnName ? null : document.getElementById("product-link").value.trim()
-      };
+      const formData = new FormData();
+      
+      formData.append("type", document.querySelector(".dropdown-btn").innerText);
+      formData.append("name", document.getElementById("product-name").value.trim());
+      formData.append("street", document.getElementById("street").value.trim());
+      formData.append("description", document.getElementById("description").value.trim());
+      formData.append("price", document.getElementById("price").value.trim());
+      formData.append("category", document.getElementById("category").value.trim());
+      formData.append("user", Telegram.WebApp.initDataUnsafe.user?.username || "неизвестно");
+      
+      // Добавление фотографий
+      for (let i = 1; i <= 3; i++) {
+        const photoInput = document.getElementById(`photo${i}`);
+        if (photoInput.files[0]) {
+          formData.append(`photo${i}`, photoInput.files[0]);
+        }
+      }
 
-      console.log("Отправляем данные:", data);
+      if (!isOwnName) {
+        formData.append("link", document.getElementById("product-link").value.trim());
+      }
 
       fetch("/send-post", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: formData
       })
       .then(res => res.json())
       .then(resp => {
@@ -194,14 +206,5 @@
       .catch(err => alert("Ошибка: " + err));
     }
   </script>
-  <script>
-  document.addEventListener('click', function (e) {
-    const isInput = e.target.closest('input, textarea, select, button');
-    if (!isInput) {
-      document.activeElement.blur();
-    }
-  });
-</script>
-
 </body>
 </html>
