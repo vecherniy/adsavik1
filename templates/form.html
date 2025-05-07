@@ -121,16 +121,16 @@
     <input type="text" id="product-name" placeholder="Например: Стул IKEA" />
 
     <label>Улица</label>
-    <input type="text" id="street" placeholder="Например: Ленина 10" />
+    <input type="text" id="street" placeholder="Например: Лукна 10" />
 
     <label>Описание товара</label>
-    <textarea id="description" rows="4" placeholder="Напиши подробнее..."></textarea>
+    <textarea id="description" rows="4" placeholder="Напиши подробнее о товаре..."></textarea>
 
     <label>Цена товара</label>
     <input type="number" id="price" placeholder="Например: 500" />
 
     <label>Категория</label>
-    <input type="text" id="category" placeholder="электроника" oninput="prependHash(this)" />
+    <input type="text" id="category" placeholder="Например: мебель" oninput="prependHash(this)" />
 
     <div class="photo-upload">
       <label>Фото товара (до 3 фото)</label>
@@ -172,7 +172,7 @@
 
     function toggleSource() {
       isOwnName = !isOwnName;
-      document.getElementById("toggle-source").innerText = isOwnName ? "От своего имени" : "От имени магазина";
+      document.getElementById("toggle-source").innerText = isOwnName ? "От своего имени" : "Из другого источника";
       document.getElementById("link-block").style.display = isOwnName ? "none" : "block";
     }
 
