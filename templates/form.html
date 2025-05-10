@@ -144,12 +144,12 @@
                 </div>
             </div>
             <div style="width: 150px; align-self: end;">
-                <button id="toggle-source" class="toggle-btn small" onclick="toggleSource()">От своего имени</button>
+                <button id="toggle-source" class="toggle-btn small" onclick="toggleSource()">Написать мне</button>
             </div>
         </div>
 
         <div id="link-block" style="display: none; margin-top: 15px;">
-            <label>Ссылка на товар</label>
+            <label>Куда обращаться?</label>
             <input type="url" id="product-link" placeholder="https://..." />
         </div>
 
@@ -206,7 +206,7 @@
 
         function toggleSource() {
             isOwnName = !isOwnName;
-            document.getElementById("toggle-source").innerText = isOwnName ? "От своего имени" : "Из другого источника";
+            document.getElementById("toggle-source").innerText = isOwnName ? "Написать мне" : "Другому человеку";
             document.getElementById("link-block").style.display = isOwnName ? "none" : "block";
         }
 
