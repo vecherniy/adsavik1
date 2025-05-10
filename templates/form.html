@@ -61,10 +61,13 @@
       border-radius: 10px;
       cursor: pointer;
       text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .toggle-btn.small {
-      background-color: #d0d0d0; /* чуть отличающийся оттенок */
+      background-color: #d0d0d0;
     }
 
     .dropdown-list {
@@ -119,8 +122,8 @@
   <div class="container">
     <h2>Новое объявление</h2>
 
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-      <div style="flex: 1 1 60%;">
+    <div style="display: flex; gap: 10px;">
+      <div style="flex: 1;">
         <label>Тип объявления</label>
         <div class="dropdown">
           <button class="dropdown-btn" onclick="toggleDropdown()">Продам</button>
@@ -132,7 +135,7 @@
           </div>
         </div>
       </div>
-      <div style="flex: 1 1 35%; align-self: end;">
+      <div style="width: 150px; align-self: end;">
         <button id="toggle-source" class="toggle-btn small" onclick="toggleSource()">От своего имени</button>
       </div>
     </div>
@@ -165,7 +168,7 @@
     </div>
 
     <div class="notice">
-    ⚠️ После нажатия кнопки "Опубликовать" дождитесь сообщения об успешной отправке.  
+      ⚠️ После нажатия кнопки "Опубликовать" дождитесь сообщения об успешной отправке.  
       Если его не будет — объявление может не появиться. (Обычно не более 15сек)
     </div>
 
