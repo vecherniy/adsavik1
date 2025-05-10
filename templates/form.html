@@ -1,251 +1,260 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Новое объявление</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: var(--tg-theme-bg-color, #ffffff);
-      color: var(--tg-theme-text-color, #000000);
-      padding: 0;
-      margin: 0;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Новое объявление</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 0;
+            margin: 0;
+        }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    h2 {
-      text-align: left;
-      margin-bottom: 30px;
-    }
+        h2 {
+            text-align: left;
+            margin-bottom: 30px;
+        }
 
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
 
-    input, textarea, .dropdown-btn {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
-      margin-top: 5px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
+        input,
+        textarea,
+        .dropdown-btn {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
 
-    textarea {
-      resize: vertical;
-    }
+        textarea {
+            resize: vertical;
+        }
 
-    .dropdown {
-      position: relative;
-      margin-top: 10px;
-    }
+        .dropdown {
+            position: relative;
+            margin-top: 10px;
+        }
 
-    .dropdown-btn,
-    .toggle-btn.small {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      background-color: #e0e0e0;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      text-align: left;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+        .dropdown-btn,
+        .toggle-btn.small {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: var(--tg-theme-secondary-bg-color, #e0e0e0);
+            color: var(--tg-theme-text-color, black);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .toggle-btn.small {
-      background-color: #d0d0d0;
-    }
+        .toggle-btn.small {
+            background-color: #d0d0d0;
+        }
 
-    .dropdown-list {
-      display: none;
-      position: absolute;
-      width: 100%;
-      background: white;
-      border: 1px solid #ccc;
-      z-index: 10;
-      border-radius: 8px;
-      margin-top: 5px;
-    }
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            width: 100%;
+            background: var(--tg-theme-bg-color, white);
+            color: var(--tg-theme-text-color, black);
+            border: 1px solid var(--tg-theme-secondary-bg-color, #ccc);
+            z-index: 10;
+            border-radius: 8px;
+            margin-top: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .dropdown-list div {
-      padding: 10px;
-      cursor: pointer;
-    }
+        .dropdown-list div {
+            padding: 10px;
+            cursor: pointer;
+            color: var(--tg-theme-text-color, black);
+        }
 
-    .dropdown-list div:hover {
-      background-color: #f0f0f0;
-    }
+        .dropdown-list div:hover {
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+        }
 
-    .photo-upload {
-      margin-top: 10px;
-    }
+        .photo-upload {
+            margin-top: 10px;
+        }
 
-    button.publish {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #2AABEE;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+        button.publish {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #2AABEE;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
 
-    .notice {
-      margin-top: 20px;
-      padding: 12px;
-      background-color: #f9f9f9;
-      color: #333;
-      border-left: 4px solid #aaa;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-  </style>
+        .notice {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #f9f9f9;
+            color: #333;
+            border-left: 4px solid #aaa;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <h2>Новое объявление</h2>
+    <div class="container">
+        <h2>Новое объявление</h2>
 
-    <div style="display: flex; gap: 10px;">
-      <div style="flex: 1;">
-        <label>Тип объявления</label>
-        <div class="dropdown">
-          <button class="dropdown-btn" onclick="toggleDropdown()">Продам</button>
-          <div class="dropdown-list" id="dropdown-options">
-            <div onclick="selectOption('Продам')">Продам</div>
-            <div onclick="selectOption('Отдам')">Отдам</div>
-            <div onclick="selectOption('Сдам')">Сдам</div>
-            <div onclick="selectOption('Куплю')">Куплю</div>
-          </div>
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Тип объявления</label>
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleDropdown()">Продам</button>
+                    <div class="dropdown-list" id="dropdown-options">
+                        <div onclick="selectOption('Продам')">Продам</div>
+                        <div onclick="selectOption('Отдам')">Отдам</div>
+                        <div onclick="selectOption('Сдам')">Сдам</div>
+                        <div onclick="selectOption('Куплю')">Куплю</div>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 150px; align-self: end;">
+                <button id="toggle-source" class="toggle-btn small" onclick="toggleSource()">От своего имени</button>
+            </div>
         </div>
-      </div>
-      <div style="width: 150px; align-self: end;">
-        <button id="toggle-source" class="toggle-btn small" onclick="toggleSource()">От своего имени</button>
-      </div>
+
+        <div id="link-block" style="display: none; margin-top: 15px;">
+            <label>Ссылка на товар</label>
+            <input type="url" id="product-link" placeholder="https://..." />
+        </div>
+
+        <label>Название товара</label>
+        <input type="text" id="product-name" placeholder="Например: Стул IKEA" />
+
+        <label>Улица</label>
+        <input type="text" id="street" placeholder="Например: Лукина 10а" />
+
+        <label>Описание товара</label>
+        <textarea id="description" rows="4" placeholder="Напиши подробнее о товаре..."></textarea>
+
+        <label>Цена товара</label>
+        <input type="number" id="price" placeholder="Например: 500" />
+
+        <label>Категория</label>
+        <input type="text" id="category" placeholder="Например: Мебель" oninput="prependHash(this)" />
+
+        <div class="photo-upload">
+            <label>Фото товара (до 3 фото)</label>
+            <input type="file" id="photo1" name="photo" accept="image/*">
+            <input type="file" id="photo2" name="photo" accept="image/*">
+            <input type="file" id="photo3" name="photo" accept="image/*">
+        </div>
+
+        <div class="notice">
+            ⚠️ После нажатия кнопки "Опубликовать" дождитесь сообщения об успешной отправке.
+            Если его не будет — объявление может не появиться. (Обычно не более 15сек)
+        </div>
+
+        <button class="publish" onclick="submitForm()">Опубликовать</button>
     </div>
 
-    <div id="link-block" style="display: none; margin-top: 15px;">
-      <label>Ссылка на товар</label>
-      <input type="url" id="product-link" placeholder="https://..." />
-    </div>
+    <script>
+        Telegram.WebApp.ready();
 
-    <label>Название товара</label>
-    <input type="text" id="product-name" placeholder="Например: Стул IKEA" />
-
-    <label>Улица</label>
-    <input type="text" id="street" placeholder="Например: Лукина 10а" />
-
-    <label>Описание товара</label>
-    <textarea id="description" rows="4" placeholder="Напиши подробнее о товаре..."></textarea>
-
-    <label>Цена товара</label>
-    <input type="number" id="price" placeholder="Например: 500" />
-
-    <label>Категория</label>
-    <input type="text" id="category" placeholder="Например: Мебель" oninput="prependHash(this)" />
-
-    <div class="photo-upload">
-      <label>Фото товара (до 3 фото)</label>
-      <input type="file" id="photo1" name="photo" accept="image/*">
-      <input type="file" id="photo2" name="photo" accept="image/*">
-      <input type="file" id="photo3" name="photo" accept="image/*">
-    </div>
-
-    <div class="notice">
-      ⚠️ После нажатия кнопки "Опубликовать" дождитесь сообщения об успешной отправке.  
-      Если его не будет — объявление может не появиться. (Обычно не более 15сек)
-    </div>
-
-    <button class="publish" onclick="submitForm()">Опубликовать</button>
-  </div>
-
-  <script>
-    Telegram.WebApp.ready();
-
-    function toggleDropdown() {
-      const dropdown = document.getElementById("dropdown-options");
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    }
-
-    function selectOption(value) {
-      document.querySelector(".dropdown-btn").innerText = value;
-      toggleDropdown();
-    }
-
-    function prependHash(input) {
-      if (!input.value.startsWith("#")) {
-        input.value = "#" + input.value.replace(/^#+/, "");
-      }
-    }
-
-    let isOwnName = true;
-
-    function toggleSource() {
-      isOwnName = !isOwnName;
-      document.getElementById("toggle-source").innerText = isOwnName ? "От своего имени" : "Из другого источника";
-      document.getElementById("link-block").style.display = isOwnName ? "none" : "block";
-    }
-
-    function submitForm() {
-      const jsonData = {
-        type: document.querySelector(".dropdown-btn").innerText,
-        name: document.getElementById("product-name").value.trim(),
-        street: document.getElementById("street").value.trim(),
-        description: document.getElementById("description").value.trim(),
-        price: document.getElementById("price").value.trim(),
-        category: document.getElementById("category").value.trim(),
-        user: Telegram.WebApp.initDataUnsafe.user?.username || "неизвестно",
-        link: isOwnName ? null : document.getElementById("product-link").value.trim()
-      };
-
-      const formData = new FormData();
-      formData.append("json", JSON.stringify(jsonData));
-
-      for (let i = 1; i <= 3; i++) {
-        const input = document.getElementById(`photo${i}`);
-        if (input && input.files[0]) {
-          formData.append("photos", input.files[0]);
+        function toggleDropdown() {
+            const dropdown = document.getElementById("dropdown-options");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
         }
-      }
 
-      fetch("/send-post", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.json())
-      .then(resp => {
-        if (resp.status === "ok") {
-          alert("Успешно отправлено!");
-          Telegram.WebApp.close();
-        } else {
-          alert("Ошибка при отправке.");
+        function selectOption(value) {
+            document.querySelector(".dropdown-btn").innerText = value;
+            toggleDropdown();
         }
-      })
-      .catch(err => alert("Ошибка: " + err));
-    }
 
-    document.addEventListener('click', function (e) {
-      const isInput = e.target.closest('input, textarea, select, button');
-      if (!isInput) {
-        document.activeElement.blur();
-      }
-    });
-  </script>
+        function prependHash(input) {
+            if (!input.value.startsWith("#")) {
+                input.value = "#" + input.value.replace(/^#+/, "");
+            }
+        }
+
+        let isOwnName = true;
+
+        function toggleSource() {
+            isOwnName = !isOwnName;
+            document.getElementById("toggle-source").innerText = isOwnName ? "От своего имени" : "Из другого источника";
+            document.getElementById("link-block").style.display = isOwnName ? "none" : "block";
+        }
+
+        function submitForm() {
+            const jsonData = {
+                type: document.querySelector(".dropdown-btn").innerText,
+                name: document.getElementById("product-name").value.trim(),
+                street: document.getElementById("street").value.trim(),
+                description: document.getElementById("description").value.trim(),
+                price: document.getElementById("price").value.trim(),
+                category: document.getElementById("category").value.trim(),
+                user: Telegram.WebApp.initDataUnsafe.user?.username || "неизвестно",
+                link: isOwnName ? null : document.getElementById("product-link").value.trim()
+            };
+
+            const formData = new FormData();
+            formData.append("json", JSON.stringify(jsonData));
+
+            for (let i = 1; i <= 3; i++) {
+                const input = document.getElementById(`photo${i}`);
+                if (input && input.files[0]) {
+                    formData.append("photos", input.files[0]);
+                }
+            }
+
+            fetch("/send-post", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(resp => {
+                    if (resp.status === "ok") {
+                        alert("Успешно отправлено!");
+                        Telegram.WebApp.close();
+                    } else {
+                        alert("Ошибка при отправке.");
+                    }
+                })
+                .catch(err => alert("Ошибка: " + err));
+        }
+
+        document.addEventListener('click', function (e) {
+            const isInput = e.target.closest('input, textarea, select, button');
+            if (!isInput) {
+                document.activeElement.blur();
+            }
+        });
+    </script>
 </body>
+
 </html>
