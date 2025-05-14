@@ -276,6 +276,42 @@
             return;
         }
     });
+        <script>
+    function previewFiles() {
+        const fileInput = document.getElementById("photo-input");
+        const previewContainer = document.getElementById("photo-preview");
+        previewContainer.innerHTML = '';  // Очистка контейнера перед добавлением новых
+
+        const files = fileInput.files;
+        for (let i = 0; i < files.length; i++) {
+            const reader = new FileReader();
+            const file = files[i];
+
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.classList.add('preview-item');
+                div.innerHTML = `
+                    <img src="${e.target.result}" width="100" />
+                    <button type="button" class="delete-button" onclick="removePreview(this)">❌</button>
+                `;
+                previewContainer.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removePreview(button) {
+        const previewItem = button.parentElement;
+        previewItem.remove();
+    }
+
+    document.getElementById("photo-input").addEventListener('change', previewFiles);
+</script>
+
+<input type="file" id="photo-input" multiple />
+<div id="photo-preview"></div>
+
 </script>
 
     </script>
