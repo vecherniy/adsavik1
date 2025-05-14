@@ -123,38 +123,6 @@
             font-size: 14px;
             line-height: 1.4;
         }
-
-        #photo-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.preview-item {
-    position: relative;
-}
-
-.preview-item img {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-.delete-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: red;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    padding: 5px;
-    cursor: pointer;
-}
-
-.delete-button:hover {
-    background: darkred;
-}
-
     </style>
 </head>
 
@@ -286,66 +254,6 @@
                 document.activeElement.blur();
             }
         });
-        <script>
-    document.getElementById("submit-button").addEventListener("click", function(event) {
-        const name = document.getElementById("name").value;
-        const price = document.getElementById("price").value;
-        const description = document.getElementById("description").value;
-        const type = document.getElementById("type").value;
-        const street = document.getElementById("street").value;
-        
-        // Проверяем обязательные поля
-        if (!name || !price || !description || !type || !street) {
-            alert("Пожалуйста, заполните все обязательные поля!");
-            event.preventDefault(); // Останавливаем отправку формы
-            return;
-        }
-
-        // Проверка, что цена состоит только из цифр
-        if (!/^\d+$/.test(price)) {
-            alert("Цена должна содержать только цифры!");
-            event.preventDefault(); // Останавливаем отправку формы
-            return;
-        }
-    });
-        <script>
-    function previewFiles() {
-        const fileInput = document.getElementById("photo-input");
-        const previewContainer = document.getElementById("photo-preview");
-        previewContainer.innerHTML = '';  // Очистка контейнера перед добавлением новых
-
-        const files = fileInput.files;
-        for (let i = 0; i < files.length; i++) {
-            const reader = new FileReader();
-            const file = files[i];
-
-            reader.onload = function(e) {
-                const div = document.createElement('div');
-                div.classList.add('preview-item');
-                div.innerHTML = `
-                    <img src="${e.target.result}" width="100" />
-                    <button type="button" class="delete-button" onclick="removePreview(this)">❌</button>
-                `;
-                previewContainer.appendChild(div);
-            };
-
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function removePreview(button) {
-        const previewItem = button.parentElement;
-        previewItem.remove();
-    }
-
-    document.getElementById("photo-input").addEventListener('change', previewFiles);
-</script>
-
-<input type="file" id="photo-input" multiple />
-<div id="photo-preview"></div>
-
-</script>
-
     </script>
 </body>
 
