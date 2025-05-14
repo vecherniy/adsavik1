@@ -123,6 +123,38 @@
             font-size: 14px;
             line-height: 1.4;
         }
+
+        #photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.preview-item {
+    position: relative;
+}
+
+.preview-item img {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background: darkred;
+}
+
     </style>
 </head>
 
