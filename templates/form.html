@@ -254,6 +254,30 @@
                 document.activeElement.blur();
             }
         });
+        <script>
+    document.getElementById("submit-button").addEventListener("click", function(event) {
+        const name = document.getElementById("name").value;
+        const price = document.getElementById("price").value;
+        const description = document.getElementById("description").value;
+        const type = document.getElementById("type").value;
+        const street = document.getElementById("street").value;
+        
+        // Проверяем обязательные поля
+        if (!name || !price || !description || !type || !street) {
+            alert("Пожалуйста, заполните все обязательные поля!");
+            event.preventDefault(); // Останавливаем отправку формы
+            return;
+        }
+
+        // Проверка, что цена состоит только из цифр
+        if (!/^\d+$/.test(price)) {
+            alert("Цена должна содержать только цифры!");
+            event.preventDefault(); // Останавливаем отправку формы
+            return;
+        }
+    });
+</script>
+
     </script>
 </body>
 
